@@ -1,6 +1,7 @@
 #include "Plane.h"
 #include "TextureManager.h"
 
+
 Plane::Plane()
 {
 	TextureManager::Instance()->loadSpriteSheet(
@@ -22,6 +23,8 @@ Plane::Plane()
 	getRigidBody()->isColliding = false;
 	setType(PLANE);
 
+	
+	buildPath();
 	m_buildAnimations();
 }
 
@@ -42,10 +45,60 @@ void Plane::draw()
 
 void Plane::update()
 {
+	getTransform()->position += getRigidBody()->velocity;
+
+	if (IsPatrolling())
+	{
+		Patrol();
+	}
+	else {
+		getRigidBody()->velocity = glm::vec2(0, 0);
+	}
 }
 
 void Plane::clean()
 {
+}
+
+void Plane::Patrol()
+{
+	if (m_path.size() > 0)
+	{
+		if (Move(m_path[currentPath]->getTransform()->position.x, m_path[currentPath]->getTransform()->position.y))
+		{
+			currentPath++;
+			if (currentPath >= m_path.size())
+				currentPath = 0;
+		}
+	}
+}
+
+void Plane::buildPath()
+{
+	currentPath = 0;
+	m_path.push_back(new PathNode(glm::vec2(1 * Config::TILE_SIZE - Config::TILE_SIZE*0.5, 1 * Config::TILE_SIZE - Config::TILE_SIZE*0.5)));
+	m_path.push_back(new PathNode(glm::vec2((Config::COL_NUM ) * Config::TILE_SIZE - Config::TILE_SIZE * 0.5, 1 * Config::TILE_SIZE - Config::TILE_SIZE * 0.5)));
+	m_path.push_back(new PathNode(glm::vec2((Config::COL_NUM) * Config::TILE_SIZE - Config::TILE_SIZE * 0.5, Config::ROW_NUM  * Config::TILE_SIZE - Config::TILE_SIZE * 0.5)));
+	m_path.push_back(new PathNode(glm::vec2(1 * Config::TILE_SIZE - Config::TILE_SIZE * 0.5, Config::ROW_NUM * Config::TILE_SIZE - Config::TILE_SIZE * 0.5)));
+}
+
+bool Plane::Move(int x, int y)
+{
+	int dy = y - getTransform()->position.y;
+	int dx = x - getTransform()->position.x;
+
+	float angle = atan2(dy, dx);
+	//std::cout << angle * 180 / M_PI << std::endl;
+	int speed = 2;
+	getRigidBody()->velocity = glm::vec2(speed * cos(angle), speed * sin(angle));
+	if (abs(dx) < 3 && abs(dy) < 3)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 void Plane::m_buildAnimations()

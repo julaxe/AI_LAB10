@@ -2,9 +2,10 @@
 
 #include "CollisionManager.h"
 
-PathNode::PathNode()
+PathNode::PathNode(glm::vec2 position)
 	:m_bLOS(false)
 {
+	getTransform()->position = position;
 	setWidth(Config::TILE_SIZE);
 	setHeight(Config::TILE_SIZE);
 	setType(PATH_NODE);

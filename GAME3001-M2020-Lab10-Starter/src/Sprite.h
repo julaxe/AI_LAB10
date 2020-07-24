@@ -6,6 +6,7 @@
 #include "Animation.h"
 #include <unordered_map>
 #include "SpriteSheet.h"
+#include "PathNode.h"
 
 class Sprite : public DisplayObject
 {
@@ -25,13 +26,16 @@ public:
 	// setters
 	void setSpriteSheet(SpriteSheet* sprite_sheet);
 	void setAnimation(const Animation& animation);
-private:
+protected:
 	// private utility functions
 	bool m_animationExists(const std::string& id);
 
 	SpriteSheet* m_pSpriteSheet;
 
 	std::unordered_map<std::string, Animation> m_pAnimations;
+
+	std::vector<PathNode*> m_path;
+	int currentPath;
 };
 
 #endif /* defined (__SPRITE__) */

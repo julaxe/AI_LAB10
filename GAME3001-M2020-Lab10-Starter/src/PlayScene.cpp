@@ -189,10 +189,12 @@ void PlayScene::handleEvents()
 			if (m_bPatrolMode)
 			{
 				std::cout << "DEBUG: Patrol Mode On" << std::endl;
+				m_pPlaneSprite->setPatrol(true);
 			}
 			else
 			{
 				std::cout << "DEBUG: Patrol Mode Off" << std::endl;
+				m_pPlaneSprite->setPatrol(false);
 			}
 		}
 	}
@@ -226,7 +228,7 @@ void PlayScene::m_buildGrid()
 	{
 		for (int col = 0; col < Config::COL_NUM; ++col)
 		{
-			auto pathNode = new PathNode();
+			auto pathNode = new PathNode(glm::vec2(0,0));
 			pathNode->getTransform()->position = glm::vec2(pathNode->getWidth() * col + Config::TILE_SIZE * 0.5, pathNode->getHeight() * row + Config::TILE_SIZE * 0.5);
 			m_pGrid.push_back(pathNode);
 		}
@@ -242,11 +244,13 @@ void PlayScene::m_displayGrid()
 	{
 		for (int col = 0; col < Config::COL_NUM; ++col)
 		{
+			auto colour = (!m_pGrid[row * Config::COL_NUM + col]->getLOS() ? glm::vec4(1.0f, 0.0f, 1.0f, 0.0f) : glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+
 			Util::DrawRect(m_pGrid[row * Config::COL_NUM + col]->getTransform()->position - glm::vec2(m_pGrid[row * Config::COL_NUM + col]->getWidth() * 0.5f, m_pGrid[row * Config::COL_NUM + col]->getHeight() * 0.5f),
-				40, 40);
+				Config::TILE_SIZE, Config::TILE_SIZE);
 
 			Util::DrawRect(m_pGrid[row * Config::COL_NUM + col]->getTransform()->position,
-				5, 5);
+				5, 5, colour);
 		}
 	}
 }

@@ -7,7 +7,7 @@
 class PathNode : public DisplayObject
 {
 public:
-	PathNode();
+	PathNode(glm::vec2 position);
 	~PathNode();
 
 	
